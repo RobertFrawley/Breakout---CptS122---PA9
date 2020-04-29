@@ -27,22 +27,28 @@ int main(void)
 	player.setFillColor(sf::Color::White);
 	player.setPosition(322, 656);
 
+sf::RectangleShape brick(sf::Vector2f(100, 25));
 
+	std::vector<Brick> bricks;
 
-
-	//sf::CircleShape shape(100.f);
-	//shape.setFillColor(sf::Color::Green);
+	for (int iX{ 0 }; iX < 6; ++iX)
+	{
+		for (int iY{ 0 }; iY < 4; ++iY)
+		{
+			bricks.emplace_back((iX + 1) * (100 + 10) + 20, (iY + 2) * (25 + 3));
+		}
+	}
 
 	while (window.isOpen())
 	{
 		sf::Vector2f ballPos = ball.getPosition();
 		sf::Vector2f playerPos = player.getPosition();
 
-		//detect collisions
+		//detect collisionsd
 		if (ballPos.x < 0) dx = speed;
-		else if (ballPos.x > 700 - 10) dx = -speed;
+		else if (ballPos.x > 800 - 10) dx = -speed;
 		if (ballPos.y < 0) dy = speed;
-		else if (ballPos.y > 700 - 10)
+		else if (ballPos.y > 800 - 10)
 		{
 			dx = 0;
 			dy = 0;
@@ -50,9 +56,15 @@ int main(void)
 
 		if (ballPos.x >= playerPos.x && ballPos.x <= playerPos.x + 70)
 		{
-			if (ballPos.y >= playerPos.y - 10)
+			if (ballPos.y >= playerPos.y - 10 && ballPos.x < playerPos.x + 35)
 			{
 				dy = -speed;
+				dx = -speed;
+			}
+			else if (ballPos.y >= playerPos.y - 10 && ballPos.x <= playerPos.x + 70)
+			{
+				dy = -speed;
+				dx = speed;
 			}
 		}
 
@@ -69,14 +81,16 @@ int main(void)
 		}
 		
 			//move left
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 			if (playerPos.x > 0)
 				player.move(-speed, 0);
 		
 			//move right
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-			if (playerPos.x < 700 - 70) // need to make this static varible
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+			if (playerPos.x < 800 - 70) // need to make this static varible
 				player.move(speed, 0);
+
+
 
 			//close window
 		sf::Event event;
@@ -90,6 +104,11 @@ int main(void)
 		window.clear();
 		window.draw(ball);
 		window.draw(player);
+		for (auto& brick : bricks)
+		{
+			window.draw(brick.shape);
+		}
+
 		//draw text
 		window.display();
 
